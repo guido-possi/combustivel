@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Calcular Combustíveis</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<style>
+		body {
+        background-color: white;
+        color: black;
+        text-align: center;
+      }
+      
+      .invert {
+        background-color: black;
+        color: white;
+      }
+
+		h1 {
+			margin-top: 0;
+		}
+
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-bottom: 1rem;
+		}
+
+		button {
+			margin-top: 1rem;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 0.5rem;
+		}
+
+		input {
+			margin-bottom: 1rem;
+			padding: 0.5rem;
+			border-radius: 0.5rem;
+			border: 1px solid #ccc;
+			font-size: 1rem;
+		}
+	</style>
+</head>
+<body>
+
+	<button onclick="inverterCores()">💡 Luz</button>
+    <script>
+      function inverterCores() {
+        var body = document.querySelector("body");
+        body.classList.toggle("invert");
+      }
+    </script>
+
+<br><br>
+
+<style>
+  #myButton {
+    background-color: white;
+    color: black;
+  }
+  #myButton.dark {
+    background-color: black;
+    color: white;
+  }
+</style>
+
+	<script>
+  function toggleColors() {
+    var button = document.getElementById("myButton");
+    button.classList.toggle("dark");
+  }
+	</script>
+
+	<h1>Calcular Combustíveis</h1>
+	<form>
+		<label for="precoGasolina">⛽ Preço da Gasolina:</label>
+		<input type="number" step="0.01" lang="pt-BR" pattern="[0-9]+([,\.][0-9]+)?" id="precoGasolina" name="precoGasolina">
+		<!-- <input type="number" step="0.01" id="precoGasolina" name="precoGasolina"> -->
+		<label for="precoAlcool">🍺 Preço do Álcool:</label>
+		<input type="number" step="0.01" id="precoAlcool" name="precoAlcool">
+		<label for="kmLitro">🚙 KM/L do Automóvel:</label>
+		<input type="number" step="0.01" id="kmLitro" name="kmLitro">
+		<label for="distancia">🗺️ Distância a percorrer (KM):</label>
+		<input type="number" id="distancia" name="distancia">
+		<button type="button" onclick="calcularLitros()">Calcular</button>
+		<!-- <button onclick="location.reload()" style="width: 100px;">Zerar</button> -->
+
+	</form>
+	<p id="resultado"></p>
+	<p id="litros"></p>
+
+<script>
+		function calcular() {
+			var precoGasolina = document.getElementById("precoGasolina").value;
+			var precoAlcool = document.getElementById("precoAlcool").value;
+			var kmLitro = document.getElementById("kmLitro").value;
+			var relacao = precoAlcool / precoGasolina;
+			var vantajosoAte = precoAlcool * (1/relacao);
+
+}
+			function calcularLitros() {
+			var kmLitro = document.getElementById("kmLitro").value;
+			var distancia = document.getElementById("distancia").value;
+			var litrosNecessarios = distancia / kmLitro;
+			var precoGasolina = document.getElementById("precoGasolina").value;
+			var precoAlcool = document.getElementById("precoAlcool").value;
+			var relacao = precoAlcool / precoGasolina;
+			var vantajosoAte = precoAlcool * (1/relacao);
+			var precoNecessario = litrosNecessarios * precoGasolina;
+
+		if (relacao > 0.7) {
+			document.getElementById("resultado").innerHTML = "+ vantajoso abastecer com Gasolina";
+			if (precoGasolina < vantajosoAte) {
+				<!-- document.getElementById("resultado").innerHTML += " até R$ " + vantajosoAte.toFixed(2);-->
+			} 
+		} else {
+			document.getElementById("resultado").innerHTML = "+ vantajoso abastecer com Álcool";
+			if (precoAlcool < vantajosoAte) {
+				<!-- document.getElementById("resultado").innerHTML += " até R$ " + vantajosoAte.toFixed(2);-->
+			} 
+		}
+
+		document.getElementById("litros").innerHTML = "Para essa distância é necessário " + litrosNecessarios.toFixed(2) + " litros de combustível, com um custo de R$ " + precoNecessario.toFixed(2);
+	}
+</script>
+
+</body>
+</html>
