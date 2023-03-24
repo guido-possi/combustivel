@@ -134,12 +134,12 @@
     <ul id="listaValores"></ul>
     <script>
       function armazenarValor() {
-        var valor = document.getElementById("valor").value;
+        var valor = document.getElementById("precoGasolina").value;
         if (valor != "") {
           var listaValores = document.getElementById("listaValores");
           var data = new Date().toLocaleDateString();
           var li = document.createElement("li");
-          li.appendChild(document.createTextNode("R$ " + valor + " em " + data));
+          li.appendChild(document.createTextNode("Preço gasolina R$ " + valor + " em " + data));
           listaValores.insertBefore(li, listaValores.firstChild);
           if (listaValores.children.length > 10) {
             listaValores.removeChild(listaValores.lastChild);
