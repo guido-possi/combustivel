@@ -47,7 +47,7 @@
 		}
 	</style>
 </head>
-<body>
+<body onload="carregarValores()">
 
 	<button onclick="inverterCores()">💡 Luz</button>
     <script>
@@ -88,7 +88,7 @@
 		<input type="number" step="0.01" id="kmLitro" name="kmLitro">
 		<label for="distancia">🗺️ Distância a percorrer (KM):</label>
 		<input type="number" id="distancia" name="distancia">
-		<button type="button" onclick="calcularLitros()">Calcular</button>
+		<button type="button" onclick="calcularLitros()";"armazenarValor()">Calcular</button>
 		<!-- <button onclick="location.reload()" style="width: 100px;">Zerar</button> -->
 
 	</form>
@@ -130,5 +130,28 @@
 	}
 </script>
 
+	<h2>Últimos 10 Valores Armazenados:</h2>
+    <ul id="listaValores"></ul>
+    <script>
+      function armazenarValor() {
+        var valor = document.getElementById("valor").value;
+        if (valor != "") {
+          var listaValores = document.getElementById("listaValores");
+          var data = new Date().toLocaleDateString();
+          var li = document.createElement("li");
+          li.appendChild(document.createTextNode("R$ " + valor + " em " + data));
+          listaValores.insertBefore(li, listaValores.firstChild);
+          if (listaValores.children.length > 10) {
+            listaValores.removeChild(listaValores.lastChild);
+          }
+          localStorage.setItem("valores", listaValores.innerHTML);
+        }
+      }
+      function carregarValores() {
+        var listaValores = document.getElementById("listaValores");
+        listaValores.innerHTML = localStorage.getItem("valores") || "";
+      }
+    </script>
+	
 </body>
 </html>
