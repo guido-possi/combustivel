@@ -55,7 +55,19 @@ body {
  button.calcular {
   background-color: #1E90FF;
   font-weight: bold;
+  height: 30px;
 }
+
+li {
+  font-size: 14px;
+}
+
+@media screen and (max-width: 480px) {
+  li {
+    font-size: 12px;
+  }
+}
+
 
  </style>
  </head>
@@ -147,11 +159,11 @@ function calcularLitros() {
   var precoNecessarioalc = litrosNecessarios * precoAlcool;
 
   if (relacao > 0.7) {
-    document.getElementById("resultado").innerHTML = "👉 ABASTEÇA COM GASOLINA" + "<br> <br> ⚠️ Com base no valor informado de álcool (R$ " + precoAlcool.toFixed(2) + "), <br> abastecer com gasolina é vantajoso até R$ " + vantajosoAteGasolina.toFixed(2) + "."; // Corrigido aqui
-    document.getElementById("litros").innerHTML = "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de <br> gasolina, com um custo de R$ " + precoNecessariogas.toFixed(2);
+    document.getElementById("resultado").innerHTML = "👉 ABASTEÇA COM GASOLINA" + "<br> <br> ⚠️ Com base no valor informado de álcool (R$ " + precoAlcool.toFixed(2) + "), abastecer com gasolina é vantajoso até R$ " + vantajosoAteGasolina.toFixed(2) + "."; // Corrigido aqui
+    document.getElementById("litros").innerHTML = "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de gasolina, com um custo de R$ " + precoNecessariogas.toFixed(2);
   } else {
-    document.getElementById("resultado").innerHTML = "👉 ABASTEÇA COM ÁLCOOL" + "<br> <br> ⚠️ Com base no valor informado de gasolina (R$ " + precoGasolina.toFixed(2) + "), <br> abastecer com álcool é vantajoso até R$ " + vantajosoAteAlcool.toFixed(2) + ".";
-    document.getElementById("litros").innerHTML = "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de <br> álcool, com um custo de R$ " + precoNecessarioalc.toFixed(2);
+    document.getElementById("resultado").innerHTML = "👉 ABASTEÇA COM ÁLCOOL" + "<br> <br> ⚠️ Com base no valor informado de gasolina (R$ " + precoGasolina.toFixed(2) + "), abastecer com álcool é vantajoso até R$ " + vantajosoAteAlcool.toFixed(2) + ".";
+    document.getElementById("litros").innerHTML = "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de álcool, com um custo de R$ " + precoNecessarioalc.toFixed(2);
   }
 }
 
@@ -159,7 +171,9 @@ function calcularLitros() {
 
  </script>
 
- <center><h2>Histórico - Últimos 10 Valores:</h2></center>
+ <center>
+ _____________________________________<br><br>
+ Histórico - Últimos 10 Valores:</center>
  <div style="margin-left: auto; margin-right: auto; width: fit-content; ">
 
  <ul id="listaValores"></ul>
@@ -177,21 +191,23 @@ function calcularLitros() {
 }
 
  
- function armazenarValor() {
- var valorGasolina = document.getElementById("precoGasolina").value;
- var valorAlcool = document.getElementById("precoAlcool").value;
- if (valorGasolina != "" && valorAlcool != "") {
- var listaValores = document.getElementById("listaValores");
- var data = new Date().toLocaleDateString();
- var li = document.createElement("li");
- li.appendChild(document.createTextNode("Preço gasolina R$ " + valorGasolina + " / Preço álcool R$ " + valorAlcool + " em " + data));
- listaValores.insertBefore(li, listaValores.firstChild);
- if (listaValores.children.length > 10) {
- listaValores.removeChild(listaValores.lastChild);
- }
- localStorage.setItem("valores", listaValores.innerHTML);
- }
- }
+function armazenarValor() {
+  var valorGasolina = document.getElementById("precoGasolina").value;
+  var valorAlcool = document.getElementById("precoAlcool").value;
+  if (valorGasolina != "" && valorAlcool != "") {
+    var listaValores = document.getElementById("listaValores");
+    var data = new Date().toLocaleDateString();
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode("Em " + data + " Preço gasolina R$ " + valorGasolina + " / Preço álcool R$ " + valorAlcool));
+    listaValores.insertBefore(li, listaValores.firstChild);
+    if (listaValores.children.length > 10) {
+      listaValores.removeChild(listaValores.lastChild);
+    }
+    localStorage.setItem("valores", listaValores.innerHTML);
+  }
+}
+
+ 
  function carregarValores() {
  var listaValores = document.getElementById("listaValores");
  listaValores.innerHTML = localStorage.getItem("valores") || "";
