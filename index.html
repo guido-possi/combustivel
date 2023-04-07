@@ -1,186 +1,200 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Calcular Combustível</title>
+<title>Calcular Combustível</title>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            background-color: black;
-            color: white;
+<style>
+body {
+ background-color: black;
+ color: white;
+ }
 
-        }
+ .invert {
+ background-color: white;
+ color: black;
+ }
 
-        .invert {
-            background-color: white;
-            color: black;
-        }
+ h1 {
+ margin-top: 0;
+ }
 
-        h1 {
-            margin-top: 0;
-        }
+ form {
+ display: flex;
+ flex-direction: column;
+ width: fit-content;
+ margin-bottom: 1rem;
+ }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            width: fit-content;
-            margin-bottom: 1rem;
-        }
+ button {
+ margin-top: 1rem;
+ }
 
-        button {
-            margin-top: 1rem;
-        }
+ label {
+ display: block;
+ margin-bottom: 0.5rem;
+ }
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
+ input {
+ margin-bottom: 1rem;
+ padding: 0.5rem;
+ border-radius: 0.5rem;
+ border: 1px solid #ccc;
+ font-size: 1rem;
+ }
 
-        input {
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-        }
+ .divgeral {
+ display: flex;
+ justify-content: center;
+ flex-direction: column;
+ }
+ </style>
+ </head>
 
-        .divgeral {
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-        }
-    </style>
-</head>
+ <body onload="carregarValores()">
+ <div class="divgeral">
+ <div style="margin-left: auto; margin-right: auto; text-align: center; ">
+ <button onclick="inverterCores()">💡 Luz</button>
+ <script>
+ function inverterCores() {
+ var body = document.querySelector("body");
+ body.classList.toggle("invert");
+ }
+ </script>
 
-<body onload="carregarValores()">
-    <div class="divgeral">
-        <div style="margin-left: auto; margin-right: auto; text-align: center; ">
-            <button onclick="inverterCores()">💡 Luz</button>
-            <script>
-                function inverterCores() {
-                    var body = document.querySelector("body");
-                    body.classList.toggle("invert");
-                }
-            </script>
+ <br><br>
 
-            <br><br>
+ <style>
+ #myButton {
+ background-color: white;
+ color: black;
+ }
 
-            <style>
-                #myButton {
-                    background-color: white;
-                    color: black;
-                }
+ #myButton.dark {
+ background-color: black;
+ color: white;
+ }
+ </style>
+ <script>
+ function toggleColors() {
+ var button = document.getElementById("myButton");
+ button.classList.toggle("dark");
+ }
+ </script>
 
-                #myButton.dark {
-                    background-color: black;
-                    color: white;
-                }
-            </style>
-            <script>
-                function toggleColors() {
-                    var button = document.getElementById("myButton");
-                    button.classList.toggle("dark");
-                }
-            </script>
+ <h1>Calcular Combustível</h1>
+ </div>
 
-            <h1>Calcular Combustível</h1>
-        </div>
+ <div style="margin-left: auto; margin-right: auto; ">
+ <form>
+ <label for="precoGasolina">⛽ Preço da Gasolina:</label>
+<input type="text" id="precoGasolina" name="precoGasolina" placeholder="Digite somente números" onfocus="this.select()" oninput="adicionarVirgula(this)" onblur="formatarCampo(this)">
+ <label for="precoAlcool">🍺 Preço do Álcool:</label>
+<input type="text" id="precoAlcool" name="precoAlcool" placeholder="Digite somente números" onfocus="this.select()" oninput="adicionarVirgula(this)" onblur="formatarCampo(this)">
+ <label for="kmLitro">🚙 KM/L do Automóvel:</label>
+ <input type="number" step="0.01" id="kmLitro" name="kmLitro" placeholder="Digite somente números" onfocus="this.select()">
+ <label for="distancia">🗺️ Distância a percorrer (KM):</label>
+ <input type="number" id="distancia" name="distancia" placeholder="Digite somente números" onfocus="this.select()">
+ <button type="button" onclick="calcularLitros(); armazenarValor()">🖩 Calcular</button>
+ </form>
+ </div>
+ <div style="margin-left: auto; margin-right: auto; text-align: center; ">
+ <p id="resultado"></p>
+ <p id="litros"></p>
+ </div>
 
+ <script>
+ 
+ function adicionarVirgula(campo) {
+  var valor = campo.value;
+  valor = valor.replace(/\D/g, "");
+  if (valor.length > 2) {
+    valor = valor.slice(0, -2) + "," + valor.slice(-2);
+  }
+  campo.value = valor;
+}
 
-        <div style="margin-left: auto; margin-right: auto; ">
-            <form>
-                <label for="precoGasolina">⛽ Preço da Gasolina:</label>
-                <input type="number" step="0.01" lang="pt-BR" pattern="[0-9]+([,\.][0-9]+)?" id="precoGasolina"
-                    name="precoGasolina">
-                <!-- <input type="number" step="0.01" id="precoGasolina" name="precoGasolina"> -->
-                <label for="precoAlcool">🍺 Preço do Álcool:</label>
-                <input type="number" step="0.01" id="precoAlcool" name="precoAlcool">
-                <label for="kmLitro">🚙 KM/L do Automóvel:</label>
-                <input type="number" step="0.01" id="kmLitro" name="kmLitro">
-                <label for="distancia">🗺️ Distância a percorrer (KM):</label>
-                <input type="number" id="distancia" name="distancia">
-                <button type="button" onclick="calcularLitros(); armazenarValor()">🖩 Calcular</button>
-                <!-- <button onclick="location.reload()" style="width: 100px;">Zerar</button> -->
-
-            </form>
-        </div>
-        <div style="margin-left: auto; margin-right: auto; text-align: center; ">
-            <p id="resultado"></p>
-            <p id="litros"></p>
-        </div>
-
-
-        <script>
-            function calcular() {
-                var precoGasolina = document.getElementById("precoGasolina").value;
-                var precoAlcool = document.getElementById("precoAlcool").value;
-                var kmLitro = document.getElementById("kmLitro").value;
-                var relacao = precoAlcool / precoGasolina;
-                var vantajosoAte = precoAlcool * (1 / relacao);
-
-            }
-            function calcularLitros() {
-                var kmLitro = document.getElementById("kmLitro").value;
-                var distancia = document.getElementById("distancia").value;
-                var litrosNecessarios = distancia / kmLitro;
-                var precoGasolina = document.getElementById("precoGasolina").value;
-                var precoAlcool = document.getElementById("precoAlcool").value;
-                var relacao = precoAlcool / precoGasolina;
-                var vantajosoAte = precoAlcool * (1 / relacao);
-                var precoNecessariogas = litrosNecessarios * precoGasolina;
-                var precoNecessarioalc = litrosNecessarios * precoAlcool;
-
-                if (relacao > 0.7) {
-                    document.getElementById("resultado").innerHTML = "Abasteça com Gasolina"+ "<br> Com base no valor informado de xxxxx (R$ x,xx), abastecer com xxxxx é vantajoso até R$ x,xx.";
-                    document.getElementById("litros").innerHTML = "Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de combustível, com um custo de R$ " + precoNecessariogas.toFixed(2);
-                    if (precoGasolina < vantajosoAte) {
-                        // <!-- document.getElementById("resultado").innerHTML += " até R$ " + vantajosoAte.toFixed(2);-->
-                    }
-                } else {
-                    document.getElementById("resultado").innerHTML = "+ vantajoso abastecer com Álcool";
-                    document.getElementById("litros").innerHTML = "Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de combustível, com um custo de R$ " + precoNecessarioalc.toFixed(2);
-                    if (precoAlcool < vantajosoAte) {
-
-                    }
-                }
-
-
-            }
-        </script>
-
-        <div style="margin-left: auto; margin-right: auto; width: fit-content; ">
-            <h2>Histórico - Últimos 10 Valores:</h2>
-            <ul id="listaValores"></ul>
-        </div>
-
-        <script>
-            function armazenarValor() {
-                var valor = document.getElementById("precoGasolina").value;
-                if (valor != "") {
-                    var listaValores = document.getElementById("listaValores");
-                    var data = new Date().toLocaleDateString();
-                    var li = document.createElement("li");
-                    li.appendChild(document.createTextNode("Preço gasolina R$ " + valor + " em " + data));
-                    listaValores.insertBefore(li, listaValores.firstChild);
-                    if (listaValores.children.length > 10) {
-                        listaValores.removeChild(listaValores.lastChild);
-                    }
-                    localStorage.setItem("valores", listaValores.innerHTML);
-                }
-            }
-            function carregarValores() {
-                var listaValores = document.getElementById("listaValores");
-                listaValores.innerHTML = localStorage.getItem("valores") || "";
-            }
-        </script>
-    </div>
+ function formatarCampo(campo) {
+  var valor = campo.value;
+  valor = valor.replace(/[^0-9,]/g, "").replace(/,+/g, ",");
+  if (valor.indexOf(',') === 0) {
+    valor = "0" + valor;
+  }
+  campo.value = valor;
+}
 
 
 
+function calcularLitros() {
+  var precoGasolina = parseFloat(document.getElementById("precoGasolina").value.replace(",", "."));
+  var precoAlcool = parseFloat(document.getElementById("precoAlcool").value.replace(",", "."));
+  var kmLitro = document.getElementById("kmLitro").value;
+  var distancia = document.getElementById("distancia").value;
+  var litrosNecessarios = distancia / kmLitro;
+  var relacao = precoAlcool / precoGasolina;
+  var vantajosoAteAlcool = precoGasolina * 0.7;
+  var vantajosoAteGasolina = precoAlcool / 0.7; // Corrigido aqui
+  var precoNecessariogas = litrosNecessarios * precoGasolina;
+  var precoNecessarioalc = litrosNecessarios * precoAlcool;
 
-</body>
+  if (relacao > 0.7) {
+    document.getElementById("resultado").innerHTML = "👉 ABASTEÇA COM GASOLINA" + "<br> <br> ⚠️ Com base no valor informado de álcool (R$ " + precoAlcool.toFixed(2) + "), <br> abastecer com gasolina é vantajoso até R$ " + vantajosoAteGasolina.toFixed(2) + "."; // Corrigido aqui
+    document.getElementById("litros").innerHTML = "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de <br> gasolina, com um custo de R$ " + precoNecessariogas.toFixed(2);
+  } else {
+    document.getElementById("resultado").innerHTML = "👉 ABASTEÇA COM ÁLCOOL" + "<br> <br> ⚠️ Com base no valor informado de gasolina (R$ " + precoGasolina.toFixed(2) + "), <br> abastecer com álcool é vantajoso até R$ " + vantajosoAteAlcool.toFixed(2) + ".";
+    document.getElementById("litros").innerHTML = "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de <br> álcool, com um custo de R$ " + precoNecessarioalc.toFixed(2);
+  }
+}
 
-</html>
+
+
+ </script>
+
+ <center><h2>Histórico - Últimos 10 Valores:</h2></center>
+ <div style="margin-left: auto; margin-right: auto; width: fit-content; ">
+
+ <ul id="listaValores"></ul>
+ <center><button id="apagarHistorico" onclick="apagarHistorico()">Apagar Histórico</button></center>
+
+ </div>
+
+ <script>
+ function apagarHistorico() {
+  if (window.confirm("Deseja apagar o histórico?")) {
+    var listaValores = document.getElementById("listaValores");
+    listaValores.innerHTML = "";
+    localStorage.setItem("valores", "");
+  }
+}
+
+ 
+ function armazenarValor() {
+ var valorGasolina = document.getElementById("precoGasolina").value;
+ var valorAlcool = document.getElementById("precoAlcool").value;
+ if (valorGasolina != "" && valorAlcool != "") {
+ var listaValores = document.getElementById("listaValores");
+ var data = new Date().toLocaleDateString();
+ var li = document.createElement("li");
+ li.appendChild(document.createTextNode("Preço gasolina R$ " + valorGasolina + " / Preço álcool R$ " + valorAlcool + " em " + data));
+ listaValores.insertBefore(li, listaValores.firstChild);
+ if (listaValores.children.length > 10) {
+ listaValores.removeChild(listaValores.lastChild);
+ }
+ localStorage.setItem("valores", listaValores.innerHTML);
+ }
+ }
+ function carregarValores() {
+ var listaValores = document.getElementById("listaValores");
+ listaValores.innerHTML = localStorage.getItem("valores") || "";
+ }
+ </script>
+ </div>
+
+
+
+ </body>
+
+ </html>
