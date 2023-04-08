@@ -72,13 +72,87 @@ li {
   font-size: 18px;
 }
 
+.popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 30%;
+            transform: translate(-50%, -50%);
+            background: green;
+            border: 1px solid black;
+            padding: 20px;
+            width: 350px;
+        }
+		
  </style>
  </head>
 
- <body onload="carregarValores()">
+<body onload="carregarValores(); atualizarBotaoLuz();">
  <div class="divgeral">
  <div style="margin-left: auto; margin-right: auto; text-align: center; ">
- <button onclick="inverterCores()">💡 Luz</button>
+ <button onclick="abrirPremium()">🔒 Acesso Premium</button>
+    <div class="popup" id="popup">
+        <h3>Acesso Premium</h3>
+        <p>Adquira o acesso Premium. Envie um PIX de R$ 2,99 para o email guidopossi@gmail.com, envie a imagem de comprovante no campo abaixo e após alguns segundos tenha o acesso liberado. Esse valor promocional é por tempo limitado, não perca!</p>
+        <input type="file" id="comprovante" accept="image/*">
+        <button onclick="enviarComprovante()">Enviar</button>
+        <p id="timer"></p>
+    </div>
+    <script>
+        function abrirPremium() {
+		atualizarBotaoLuz();
+            if (localStorage.getItem("acessoPremium")) {
+                alert("Você já tem acesso premium!");
+            } else {
+                exibirPopup();
+            }
+        }
+
+        function exibirPopup() {
+            document.getElementById("popup").style.display = "block";
+        }
+
+        function fecharPopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+		
+		function atualizarBotaoLuz() {
+  var luzButton = document.getElementById("luzButton");
+  if (localStorage.getItem("acessoPremium")) {
+    luzButton.disabled = false;
+  } else {
+    luzButton.disabled = true;
+  }
+}
+
+
+        function enviarComprovante() {
+            var comprovante = document.getElementById("comprovante");
+            var timer = document.getElementById("timer");
+
+            if (comprovante.files.length > 0) {
+                var countdown = 15;
+                timer.innerHTML = "Aguarde " + countdown + " segundos para liberação do acesso.";
+                var countdownInterval = setInterval(function () {
+                    countdown--;
+                    timer.innerHTML = "Aguarde " + countdown + " segundos para liberação do acesso.";
+
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        localStorage.setItem("acessoPremium", "true");
+                        fecharPopup();
+                        timer.innerHTML = "";
+                        alert("PARABÉNS... agora você tem o acesso premium e pode acender a Luz!");
+						atualizarBotaoLuz();
+                    }
+                }, 1000);
+            } else {
+                alert("Por favor, selecione o arquivo da imagem do comprovante PIX.");
+            }
+        }
+    </script>
+ <button id="luzButton" onclick="inverterCores()">💡 Luz</button>
+
  <script>
  function inverterCores() {
  var body = document.querySelector("body");
