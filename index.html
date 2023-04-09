@@ -218,11 +218,14 @@ li {
  function adicionarVirgula(campo) {
   var valor = campo.value;
   valor = valor.replace(/\D/g, "");
-  if (valor.length > 2) {
-    valor = valor.slice(0, -2) + "," + valor.slice(-2);
+  if (valor.length === 1) {
+    valor = "0," + valor;
+  } else if (valor.length > 1) {
+    valor = parseInt(valor.slice(0, -2)) + "," + valor.slice(-2); // Adicionei parseInt() para remover o zero à esquerda
   }
   campo.value = valor;
 }
+
 
  function formatarCampo(campo) {
   var valor = campo.value;
