@@ -216,24 +216,30 @@ li {
  <script>
  
  function adicionarVirgula(campo) {
-  var valor = campo.value;
+  var valor = removerRS(campo.value);
   valor = valor.replace(/\D/g, "");
   if (valor.length === 1) {
     valor = "0," + valor;
   } else if (valor.length > 1) {
-    valor = parseInt(valor.slice(0, -2)) + "," + valor.slice(-2); // Adicionei parseInt() para remover o zero à esquerda
+    valor = parseInt(valor.slice(0, -2)) + "," + valor.slice(-2);
   }
-  campo.value = valor;
+  campo.value = "R$ " + valor;
 }
 
 
- function formatarCampo(campo) {
-  var valor = campo.value;
+
+function formatarCampo(campo) {
+  var valor = removerRS(campo.value);
   valor = valor.replace(/[^0-9,]/g, "").replace(/,+/g, ",");
   if (valor.indexOf(',') === 0) {
     valor = "0" + valor;
   }
-  campo.value = valor;
+  campo.value = "R$ " + valor;
+}
+
+
+function removerRS(valor) {
+  return valor.replace(/R\$/g, "").trim();
 }
 
 
