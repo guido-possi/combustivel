@@ -296,7 +296,7 @@ function armazenarValor() {
     var listaValores = document.getElementById("listaValores");
     var data = new Date().toLocaleDateString();
     var li = document.createElement("li");
-    li.appendChild(document.createTextNode("Em " + data + " Preço gasolina R$ " + valorGasolina + " / Preço álcool R$ " + valorAlcool));
+    li.appendChild(document.createTextNode("Em " + data + " Preço gasolina " + valorGasolina + " / Preço álcool " + valorAlcool));
     listaValores.insertBefore(li, listaValores.firstChild);
     if (listaValores.children.length > 10) {
       listaValores.removeChild(listaValores.lastChild);
