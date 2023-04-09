@@ -296,8 +296,13 @@ function armazenarValor() {
   var precoAlcool = parseFloat(valorAlcool);
 
   if (isNaN(precoGasolina) || isNaN(precoAlcool)) {
+    alert("Para gravar no histórico, os dois preços devem ser preenchidos.");
     return;
   }
+
+  // Restante do código da função...
+}
+
 
   var listaValores = document.getElementById("listaValores");
   var dataAtual = new Date().toLocaleDateString();
