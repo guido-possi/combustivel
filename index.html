@@ -245,14 +245,14 @@ function removerRS(valor) {
 
 
 function calcularLitros() {
-  var precoGasolina = parseFloat(document.getElementById("precoGasolina").value.replace(",", "."));
-  var precoAlcool = parseFloat(document.getElementById("precoAlcool").value.replace(",", "."));
+  var precoGasolina = parseFloat(removerRS(document.getElementById("precoGasolina").value).replace(",", "."));
+  var precoAlcool = parseFloat(removerRS(document.getElementById("precoAlcool").value).replace(",", "."));
   var kmLitro = document.getElementById("kmLitro").value;
   var distancia = document.getElementById("distancia").value;
   var litrosNecessarios = distancia / kmLitro;
   var relacao = precoAlcool / precoGasolina;
   var vantajosoAteAlcool = precoGasolina * 0.7;
-  var vantajosoAteGasolina = precoAlcool / 0.7; // Corrigido aqui
+  var vantajosoAteGasolina = precoAlcool / 0.7;
   var precoNecessariogas = litrosNecessarios * precoGasolina;
   var precoNecessarioalc = litrosNecessarios * precoAlcool;
 
