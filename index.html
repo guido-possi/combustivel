@@ -290,20 +290,39 @@ function calcularLitros() {
 
  
 function armazenarValor() {
-  var valorGasolina = document.getElementById("precoGasolina").value;
-  var valorAlcool = document.getElementById("precoAlcool").value;
-  if (valorGasolina != "" && valorAlcool != "") {
-    var listaValores = document.getElementById("listaValores");
-    var data = new Date().toLocaleDateString();
-    var li = document.createElement("li");
-    li.appendChild(document.createTextNode("Em " + data + " Preço gasolina " + valorGasolina + " / Preço álcool " + valorAlcool));
-    listaValores.insertBefore(li, listaValores.firstChild);
-    if (listaValores.children.length > 10) {
-      listaValores.removeChild(listaValores.lastChild);
-    }
-    localStorage.setItem("valores", listaValores.innerHTML);
+  var valorGasolina = removerRS(document.getElementById("precoGasolina").value).replace(",", ".");
+  var valorAlcool = removerRS(document.getElementById("precoAlcool").value).replace(",", ".");
+  var precoGasolina = parseFloat(valorGasolina);
+  var precoAlcool = parseFloat(valorAlcool);
+
+  if (isNaN(precoGasolina) || isNaN(precoAlcool)) {
+    return;
   }
+
+  var listaValores = document.getElementById("listaValores");
+  var dataAtual = new Date().toLocaleDateString();
+  var novoRegistro = "Em " + dataAtual + " Preço gasolina R$ " + parseFloat(valorGasolina).toFixed(2) + " / Preço álcool R$ " + parseFloat(valorAlcool).toFixed(2);
+
+  if (listaValores.children.length > 0) {
+    var ultimoRegistro = listaValores.firstChild.textContent;
+    var dataUltimoRegistro = ultimoRegistro.split(" ")[1];
+    var valorGasolinaUltimoRegistro = parseFloat(ultimoRegistro.split(" ")[6]);
+    var valorAlcoolUltimoRegistro = parseFloat(ultimoRegistro.split(" ")[11]);
+
+    if (novoRegistro === ultimoRegistro || (dataAtual === dataUltimoRegistro && precoGasolina === valorGasolinaUltimoRegistro && precoAlcool === valorAlcoolUltimoRegistro)) {
+      return;
+    }
+  }
+
+  var li = document.createElement("li");
+  li.appendChild(document.createTextNode(novoRegistro));
+  listaValores.insertBefore(li, listaValores.firstChild);
+  if (listaValores.children.length > 10) {
+    listaValores.removeChild(listaValores.lastChild);
+  }
+  localStorage.setItem("valores", listaValores.innerHTML);
 }
+
 
  
  function carregarValores() {
