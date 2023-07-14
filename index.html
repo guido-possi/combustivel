@@ -144,10 +144,10 @@ li {
 
             if (comprovante.files.length > 0) {
                 var countdown = 15;
-                timer.innerHTML = "Aguarde " + countdown + " segundos para liberação do acesso.";
+                timer.innerHTML = "Aguarde " + countdown + " segundos, estamos lendo seu arquivo.";
                 var countdownInterval = setInterval(function () {
                     countdown--;
-                    timer.innerHTML = "Aguarde " + countdown + " segundos para liberação do acesso.";
+                    timer.innerHTML = "Aguarde " + countdown + " segundos, estamos lendo seu arquivo.";
 
                     if (countdown <= 0) {
                         clearInterval(countdownInterval);
