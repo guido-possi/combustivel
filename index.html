@@ -1,340 +1,513 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
-<title>Calcular Combustível</title>
+  <title>Calcular Combustível</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      color: white;
+      font-family: Arial, sans-serif;
+      background-color: black; /* cor de fundo padrão */
+    }
 
-<style>
-body {
- background-color: black;
- color: white;
- }
+    /* Modo invertido (Luz acesa) */
+    .invert {
+      background-color: white;
+      color: black;
+    }
 
- .invert {
- background-color: white;
- color: black;
- }
+    h1 {
+      margin-top: 0;
+    }
 
- h1 {
- margin-top: 0;
- }
+    .divgeral {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
 
- form {
- display: flex;
- flex-direction: column;
- width: fit-content;
- margin-bottom: 1rem;
- }
+    form {
+      display: flex;
+      flex-direction: column;
+      width: fit-content;
+      margin-bottom: 1rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
 
- button {
- margin-top: 1rem;
- }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
 
- label {
- display: block;
- margin-bottom: 0.5rem;
- }
+    input {
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
 
- input {
- margin-bottom: 1rem;
- padding: 0.5rem;
- border-radius: 0.5rem;
- border: 1px solid #ccc;
- font-size: 1rem;
- }
+    button.calcular {
+      background-color: #00BFFF;
+      font-weight: bold;
+      height: 30px;
+      border: none;
+      border-radius: 0.3rem;
+      cursor: pointer;
+    }
 
- .divgeral {
- display: flex;
- justify-content: center;
- flex-direction: column;
- }
- 
- button.calcular {
-  background-color: #00BFFF;
-  font-weight: bold;
-  height: 30px;
-}
+    button {
+      margin-top: 1rem;
+      cursor: pointer;
+    }
 
-li {
-  font-size: 14px;
-}
+    li {
+      font-size: 14px;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 0.3rem;
+      margin-bottom: 0.2rem;
+      border-radius: 0.3rem;
+    }
 
-@media screen and (max-width: 480px) {
-  li {
-    font-size: 11px;
-  }
-}
+    @media screen and (max-width: 480px) {
+      li {
+        font-size: 11px;
+      }
+    }
 
-.abasteca {
-  font-size: 18px;
-}
+    .abasteca {
+      font-size: 18px;
+      font-weight: bold;
+    }
 
-.popup {
-            display: none;
-            position: fixed;
-            left: 50%;
-            top: 40%;
-            transform: translate(-50%, -50%);
-            background: green;
-            border: 1px solid black;
-            padding: 20px;
-            width: 350px;
-        }
-		
-		#closeButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: transparent;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-}
-		
- </style>
- </head>
+    /* POPUP GENÉRICO (alert/confirm customizado) */
+    .popup {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      background: #006400;
+      border: 2px solid black;
+      padding: 20px;
+      width: 350px;
+      z-index: 9999;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+      border-radius: 0.5rem;
+      color: white;
+    }
+
+    #closeButton, #closeButtonGeneral {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .popup button {
+      margin-top: 1rem;
+    }
+
+    /* Popup EXCLUSIVO do Premium */
+    #popup {
+      background: green;
+    }
+
+    /* Popup GENÉRICO */
+    #generalPopup {
+      background: rgba(0, 0.5, 0.5, 0.95);
+    }
+
+    /* Ícone de remover item no histórico (X) */
+    .delete-icon {
+      color: red;
+      margin-left: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
 
 <body onload="carregarValores(); atualizarBotaoLuz();">
- <div class="divgeral">
- <div style="margin-left: auto; margin-right: auto; text-align: center; ">
- <button onclick="abrirPremium()">🔒 Acesso Premium</button>
-    <div class="popup" id="popup">
-	<button id="closeButton" onclick="fecharPopup()">X</button>
-        <h3>Acesso Premium</h3>
-        <p>Adquira o acesso Premium agora! Envie um PIX de R$ 2,99 para o email guidopossi@gmail.com. Depois envie a imagem do comprovante no campo abaixo e após alguns segundos tenha o acesso liberado. Esse valor promocional é por tempo limitado, não perca!</p>
-        <input type="file" id="comprovante" accept="image/*">
-        <button onclick="enviarComprovante()">Enviar</button>
-        <p id="timer"></p>
+  <div class="divgeral">
+    <!-- BOTÕES SUPERIORES -->
+    <div style="text-align: center;">
+      <button onclick="abrirPremium()">🔒 Acesso Premium</button>
+      <button id="luzButton" onclick="inverterCores()">💡 Luz</button>
+      <br><br>
+      <h1>Calcular Combustível</h1>
     </div>
-    <script>
-        function abrirPremium() {
-		atualizarBotaoLuz();
-            if (localStorage.getItem("acessoPremium")) {
-                alert("Você já tem acesso premium!");
-            } else {
-                exibirPopup();
-            }
-        }
 
-        function exibirPopup() {
-            document.getElementById("popup").style.display = "block";
-        }
+    <!-- FORMULÁRIO -->
+    <div>
+      <form>
+        <label for="precoGasolina">⛽ Preço da Gasolina:</label>
+        <input type="tel" id="precoGasolina" name="precoGasolina" 
+               placeholder="Digite somente números"
+               onfocus="this.select()" oninput="adicionarVirgula(this)" onblur="formatarCampo(this)">
 
-        function fecharPopup() {
-            document.getElementById("popup").style.display = "none";
-        }
-		
-		function atualizarBotaoLuz() {
-  var luzButton = document.getElementById("luzButton");
-  if (localStorage.getItem("acessoPremium")) {
-    luzButton.disabled = false;
-  } else {
-    luzButton.disabled = true;
-  }
-}
+        <label for="precoAlcool">🍺 Preço do Álcool (Etanol):</label>
+        <input type="tel" id="precoAlcool" name="precoAlcool" 
+               placeholder="Digite somente números"
+               onfocus="this.select()" oninput="adicionarVirgula(this)" onblur="formatarCampo(this)">
 
+        <label for="kmLitro">🚙 KM/L do Automóvel (opcional):</label>
+        <input type="number" step="0.01" id="kmLitro" name="kmLitro" 
+               placeholder="Digite somente números" onfocus="this.select()">
 
-        function enviarComprovante() {
-            var comprovante = document.getElementById("comprovante");
-            var timer = document.getElementById("timer");
+        <label for="distancia">🗺️ Distância a percorrer (KM) (opcional):</label>
+        <input type="number" id="distancia" name="distancia" 
+               placeholder="Digite somente números" onfocus="this.select()">
 
-            if (comprovante.files.length > 0) {
-                var countdown = 15;
-                timer.innerHTML = "Aguarde " + countdown + " segundos, estamos lendo seu arquivo.";
-                var countdownInterval = setInterval(function () {
-                    countdown--;
-                    timer.innerHTML = "Aguarde " + countdown + " segundos, estamos lendo seu arquivo.";
+        <button type="button" class="calcular" onclick="calcularLitros(); armazenarValor()">
+          Calcular
+        </button>
+      </form>
+    </div>
 
-                    if (countdown <= 0) {
-                        clearInterval(countdownInterval);
-                        localStorage.setItem("acessoPremium", "true");
-                        fecharPopup();
-                        timer.innerHTML = "";
-                        alert("PARABÉNS... agora você tem o acesso premium e pode acender a Luz!");
-						atualizarBotaoLuz();
-                    }
-                }, 1000);
-            } else {
-                alert("Por favor, selecione o arquivo da imagem do comprovante PIX.");
-            }
-        }
-    </script>
- <button id="luzButton" onclick="inverterCores()">💡 Luz</button>
+    <!-- RESULTADO -->
+    <div style="text-align: center;">
+      <p id="resultado"></p>
+      <p id="litros"></p>
+    </div>
 
- <script>
- function inverterCores() {
- var body = document.querySelector("body");
- body.classList.toggle("invert");
- }
- </script>
+    <!-- HISTÓRICO -->
+    <center>
+      _____________________________________
+      <br><br>
+      Histórico - Últimos 10 Valores:
+    </center>
+    <div style="width: fit-content; margin: 0 auto;">
+      <ul id="listaValores"></ul>
+      <center>
+        <button id="apagarHistorico" onclick="apagarHistorico()">Apagar Histórico</button>
+      </center>
+    </div>
+  </div>
 
- <br><br>
+  <!-- POPUP DO PREMIUM -->
+  <div class="popup" id="popup">
+    <button id="closeButton" onclick="fecharPopup()">X</button>
+    <h3>Acesso Premium</h3>
+    <p>
+      Adquira o acesso Premium agora! Envie um PIX de R$ 2,99 para o email guidopossi@gmail.com.
+      Depois envie a imagem do comprovante no campo abaixo e após alguns segundos terá o acesso liberado.
+      Esse valor promocional é por tempo limitado, não perca!
+    </p>
+    <input type="file" id="comprovante" accept="image/*">
+    <button onclick="enviarComprovante()">Enviar</button>
+    <p id="timer"></p>
+  </div>
 
- <style>
- #myButton {
- background-color: white;
- color: black;
- }
+  <!-- POPUP GENÉRICO (para substituir alert/confirm) -->
+  <div class="popup" id="generalPopup">
+    <button id="closeButtonGeneral" onclick="fecharGeneralPopup()">X</button>
+    <h3 id="generalPopupTitle"></h3>
+    <p id="generalPopupMessage"></p>
+    <div id="generalPopupButtons"></div>
+  </div>
 
- #myButton.dark {
- background-color: black;
- color: white;
- }
- </style>
- <script>
- function toggleColors() {
- var button = document.getElementById("myButton");
- button.classList.toggle("dark");
- }
- </script>
-
- <h1>Calcular Combustível</h1>
- </div>
-
- <div style="margin-left: auto; margin-right: auto; ">
- <form>
- <label for="precoGasolina">⛽ Preço da Gasolina:</label>
-<input type="tel" id="precoGasolina" name="precoGasolina" placeholder="Digite somente números" onfocus="this.select()" oninput="adicionarVirgula(this)" onblur="formatarCampo(this)">
- <label for="precoAlcool">🍺 Preço do Álcool (Etanol):</label>
-<input type="tel" id="precoAlcool" name="precoAlcool" placeholder="Digite somente números" onfocus="this.select()" oninput="adicionarVirgula(this)" onblur="formatarCampo(this)">
- <label for="kmLitro">🚙 KM/L do Automóvel:</label>
- <input type="number" step="0.01" id="kmLitro" name="kmLitro" placeholder="Digite somente números" onfocus="this.select()">
- <label for="distancia">🗺️ Distância a percorrer (KM):</label>
- <input type="number" id="distancia" name="distancia" placeholder="Digite somente números" onfocus="this.select()">
- <button type="button" class="calcular" onclick="calcularLitros(); armazenarValor()">Calcular</button>
- </form>
- </div>
- <div style="margin-left: auto; margin-right: auto; text-align: center; ">
- <p id="resultado"></p>
- <p id="litros"></p>
- </div>
-
- <script>
- 
- function adicionarVirgula(campo) {
-  var valor = removerRS(campo.value);
-  valor = valor.replace(/\D/g, "");
-  if (valor.length === 1) {
-    valor = "0," + valor;
-  } else if (valor.length > 1) {
-    valor = parseInt(valor.slice(0, -2)) + "," + valor.slice(-2);
-  }
-  campo.value = "R$ " + valor;
-}
-
-
-
-function formatarCampo(campo) {
-  var valor = removerRS(campo.value);
-  valor = valor.replace(/[^0-9,]/g, "").replace(/,+/g, ",");
-  if (valor.indexOf(',') === 0) {
-    valor = "0" + valor;
-  }
-  campo.value = "R$ " + valor;
-}
-
-
-function removerRS(valor) {
-  return valor.replace(/R\$/g, "").trim();
-}
-
-
-
-function calcularLitros() {
-  var precoGasolina = parseFloat(removerRS(document.getElementById("precoGasolina").value).replace(",", "."));
-  var precoAlcool = parseFloat(removerRS(document.getElementById("precoAlcool").value).replace(",", "."));
-  var kmLitro = document.getElementById("kmLitro").value;
-  var distancia = document.getElementById("distancia").value;
-  var litrosNecessarios = distancia / kmLitro;
-  var relacao = precoAlcool / precoGasolina;
-  var vantajosoAteAlcool = precoGasolina * 0.7;
-  var vantajosoAteGasolina = precoAlcool / 0.7;
-  var precoNecessariogas = litrosNecessarios * precoGasolina;
-  var precoNecessarioalc = litrosNecessarios * precoAlcool;
-
-  if (relacao > 0.7) {
-    document.getElementById("resultado").innerHTML = "<span class='abasteca'>👉 ABASTEÇA COM GASOLINA</span>" + "<br> <br> ⚠️ Com base no valor informado de álcool (R$ " + precoAlcool.toFixed(2) + "), abastecer com gasolina é vantajoso até R$ " + vantajosoAteGasolina.toFixed(2) + "."; // Corrigido aqui
-    document.getElementById("litros").innerHTML = "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de gasolina, com um custo de R$ " + precoNecessariogas.toFixed(2);
-  } else {
-    document.getElementById("resultado").innerHTML = "<span class='abasteca'>👉 ABASTEÇA COM ÁLCOOL</span>" + "<br> <br> ⚠️ Com base no valor informado de gasolina (R$ " + precoGasolina.toFixed(2) + "), abastecer com álcool é vantajoso até R$ " + vantajosoAteAlcool.toFixed(2) + ".";
-    document.getElementById("litros").innerHTML = "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) + " litros de álcool, com um custo de R$ " + precoNecessarioalc.toFixed(2);
-  }
-}
-
-
-
- </script>
-
- <center>
- _____________________________________<br><br>
- Histórico - Últimos 10 Valores:</center>
- <div style="margin-left: auto; margin-right: auto; width: fit-content; ">
-
- <ul id="listaValores"></ul>
- <center><button id="apagarHistorico" onclick="apagarHistorico()">Apagar Histórico</button></center>
-
- </div>
-
- <script>
- function apagarHistorico() {
-  if (window.confirm("Deseja apagar o histórico?")) {
-    var listaValores = document.getElementById("listaValores");
-    listaValores.innerHTML = "";
-    localStorage.setItem("valores", "");
-  }
-}
-
- 
-function armazenarValor() {
-  var valorGasolina = removerRS(document.getElementById("precoGasolina").value).replace(",", ".");
-  var valorAlcool = removerRS(document.getElementById("precoAlcool").value).replace(",", ".");
-  var precoGasolina = parseFloat(valorGasolina);
-  var precoAlcool = parseFloat(valorAlcool);
-
-  if (isNaN(precoGasolina) || isNaN(precoAlcool)) {
-    alert("Para gravar no histórico, os dois preços devem ser preenchidos.");
-    return;
-  }
-
-  var listaValores = document.getElementById("listaValores");
-  var dataAtual = new Date().toLocaleDateString();
-  var novoRegistro = "Em " + dataAtual + " Preço gasolina R$ " + parseFloat(valorGasolina).toFixed(2) + " / Preço álcool R$ " + parseFloat(valorAlcool).toFixed(2);
-
-  if (listaValores.children.length > 0) {
-    var ultimoRegistro = listaValores.firstChild.textContent;
-    var dataUltimoRegistro = ultimoRegistro.split(" ")[1];
-    var valorGasolinaUltimoRegistro = parseFloat(ultimoRegistro.split(" ")[6]);
-    var valorAlcoolUltimoRegistro = parseFloat(ultimoRegistro.split(" ")[11]);
-
-    if (novoRegistro === ultimoRegistro || (dataAtual === dataUltimoRegistro && precoGasolina === valorGasolinaUltimoRegistro && precoAlcool === valorAlcoolUltimoRegistro)) {
-      return;
+  <script>
+    /* =======================
+       FUNÇÕES DO PREMIUM
+       ======================= */
+    function abrirPremium() {
+      atualizarBotaoLuz();
+      if (localStorage.getItem("acessoPremium")) {
+        showCustomAlert("Acesso Premium", "Você já tem acesso premium e pode acender ou apagar a luz!");
+      } else {
+        exibirPopup();
+      }
     }
-  }
+    function exibirPopup() {
+      document.getElementById("popup").style.display = "block";
+    }
+    function fecharPopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+    function enviarComprovante() {
+      var comprovante = document.getElementById("comprovante");
+      var timer = document.getElementById("timer");
 
-  var li = document.createElement("li");
-  li.appendChild(document.createTextNode(novoRegistro));
-  listaValores.insertBefore(li, listaValores.firstChild);
-  if (listaValores.children.length > 10) {
-    listaValores.removeChild(listaValores.lastChild);
-  }
-  localStorage.setItem("valores", listaValores.innerHTML);
-}
+      if (comprovante.files.length > 0) {
+        var countdown = 15;
+        timer.innerHTML = "Aguarde " + countdown + " segundos, estamos lendo seu arquivo.";
+        var countdownInterval = setInterval(function () {
+          countdown--;
+          timer.innerHTML = "Aguarde " + countdown + " segundos, estamos lendo seu arquivo.";
+          if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            localStorage.setItem("acessoPremium", "true");
+            fecharPopup();
+            timer.innerHTML = "";
+            showCustomAlert("Acesso Premium", "PARABÉNS... agora você tem o acesso premium e pode acender a Luz!");
+            atualizarBotaoLuz();
+          }
+        }, 1000);
+      } else {
+        showCustomAlert("Atenção", "Por favor, selecione o arquivo da imagem do comprovante PIX.");
+      }
+    }
 
+    /* ===============================
+       POPUPS PERSONALIZADOS
+       (substituindo alert e confirm)
+       =============================== */
+    const generalPopup        = document.getElementById("generalPopup");
+    const generalPopupTitle   = document.getElementById("generalPopupTitle");
+    const generalPopupMessage = document.getElementById("generalPopupMessage");
+    const generalPopupButtons = document.getElementById("generalPopupButtons");
 
- 
- function carregarValores() {
- var listaValores = document.getElementById("listaValores");
- listaValores.innerHTML = localStorage.getItem("valores") || "";
- }
- </script>
- </div>
+    // ALERTA simples (só botão Ok)
+    function showCustomAlert(title, message) {
+      generalPopupTitle.innerText   = title;
+      generalPopupMessage.innerText = message;
+      // Cria botão OK
+      generalPopupButtons.innerHTML = "";
+      const okButton = document.createElement("button");
+      okButton.innerText = "OK";
+      okButton.onclick = function() {
+        fecharGeneralPopup();
+      };
+      generalPopupButtons.appendChild(okButton);
 
+      generalPopup.style.display = "block";
+    }
 
+    // CONFIRM (botão "Sim" e "Não")
+    function showCustomConfirm(title, message, yesCallback, noCallback) {
+      generalPopupTitle.innerText   = title;
+      generalPopupMessage.innerText = message;
+      // Limpa botões
+      generalPopupButtons.innerHTML = "";
 
- </body>
+      // Botão SIM
+      const yesBtn = document.createElement("button");
+      yesBtn.innerText = "Sim";
+      yesBtn.onclick = function() {
+        fecharGeneralPopup();
+        if (yesCallback) yesCallback();
+      };
 
- </html>
+      // Botão NÃO
+      const noBtn = document.createElement("button");
+      noBtn.innerText = "Não";
+      noBtn.onclick = function() {
+        fecharGeneralPopup();
+        if (noCallback) noCallback();
+      };
+
+      generalPopupButtons.appendChild(yesBtn);
+      generalPopupButtons.appendChild(noBtn);
+
+      generalPopup.style.display = "block";
+    }
+
+    function fecharGeneralPopup() {
+      generalPopup.style.display = "none";
+    }
+
+    /* =======================
+       MODO LUZ
+       ======================= */
+    function atualizarBotaoLuz() {
+      var luzButton = document.getElementById("luzButton");
+      if (localStorage.getItem("acessoPremium")) {
+        luzButton.disabled = false;
+      } else {
+        luzButton.disabled = true;
+      }
+    }
+    function inverterCores() {
+      var body = document.querySelector("body");
+      body.classList.toggle("invert");
+    }
+
+    /* =======================
+       FUNÇÕES DE FORMATAÇÃO
+       ======================= */
+    function removerRS(valor) {
+      return valor.replace(/R\$/g, "").trim();
+    }
+    function adicionarVirgula(campo) {
+      var valor = removerRS(campo.value);
+      valor = valor.replace(/\D/g, "");
+      if (valor.length === 1) {
+        valor = "0," + valor;
+      } else if (valor.length > 1) {
+        valor = parseInt(valor.slice(0, -2)) + "," + valor.slice(-2);
+      }
+      campo.value = "R$ " + valor;
+    }
+    function formatarCampo(campo) {
+      var valor = removerRS(campo.value);
+      valor = valor.replace(/[^0-9,]/g, "").replace(/,+/g, ",");
+      if (valor.indexOf(',') === 0) {
+        valor = "0" + valor;
+      }
+      campo.value = "R$ " + valor;
+    }
+
+    /* =======================
+       CÁLCULO
+       ======================= */
+    function calcularLitros() {
+      var precoGasolina = parseFloat(removerRS(document.getElementById("precoGasolina").value).replace(",", "."));
+      var precoAlcool   = parseFloat(removerRS(document.getElementById("precoAlcool").value).replace(",", "."));
+      var kmLitro       = parseFloat(document.getElementById("kmLitro").value);
+      var distancia     = parseFloat(document.getElementById("distancia").value);
+
+      // Exige apenas preços preenchidos:
+      if (isNaN(precoGasolina) || isNaN(precoAlcool)) {
+        showCustomAlert("Atenção", "Preencha os valores de Gasolina e Álcool.");
+        return;
+      }
+
+      // Relação para decidir vantagem
+      var relacao          = precoAlcool / precoGasolina;
+      var vantajosoAteAlc  = precoGasolina * 0.7;
+      var vantajosoAteGas  = precoAlcool   / 0.7;
+
+      var resultadoElem = document.getElementById("resultado");
+      var litrosElem   = document.getElementById("litros");
+      resultadoElem.innerHTML = "";
+      litrosElem.innerHTML    = "";
+
+      // Exibe mensagem de vantagem
+      if (relacao > 0.7) {
+        resultadoElem.innerHTML =
+          "<span class='abasteca'>👉 ABASTEÇA COM GASOLINA</span><br><br>" +
+          "⚠️ Com base no valor informado de álcool (R$ " + precoAlcool.toFixed(2) +
+          "), abastecer com gasolina é vantajoso até R$ " + vantajosoAteGas.toFixed(2) + ".";
+      } else {
+        resultadoElem.innerHTML =
+          "<span class='abasteca'>👉 ABASTEÇA COM ÁLCOOL</span><br><br>" +
+          "⚠️ Com base no valor informado de gasolina (R$ " + precoGasolina.toFixed(2) +
+          "), abastecer com álcool é vantajoso até R$ " + vantajosoAteAlc.toFixed(2) + ".";
+      }
+
+      // Se kmLitro e distancia forem preenchidos e válidos, calcular custo total
+      if (!isNaN(kmLitro) && kmLitro > 0 && !isNaN(distancia) && distancia > 0) {
+        var litrosNecessarios = distancia / kmLitro;
+        var precoNecessGas    = litrosNecessarios * precoGasolina;
+        var precoNecessAlc    = litrosNecessarios * precoAlcool;
+
+        if (relacao > 0.7) {
+          // Se gasolina for mais vantajosa
+          litrosElem.innerHTML =
+            "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) +
+            " litros de gasolina, com um custo de R$ " + precoNecessGas.toFixed(2);
+        } else {
+          // Se álcool for mais vantajoso
+          litrosElem.innerHTML =
+            "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) +
+            " litros de álcool, com um custo de R$ " + precoNecessAlc.toFixed(2);
+        }
+      } else {
+        // Se não preencheram kmLitro/distancia, apenas exibir "não informado" (ou nada)
+        litrosElem.innerHTML =
+          "<small>KM/L e Distância não informados, então não calculamos o custo total.</small>";
+      }
+    }
+
+    /* =======================
+       HISTÓRICO
+       ======================= */
+    function formatarDataCurta(dateObj) {
+      let [dia, mes, anoLongo] = dateObj.toLocaleDateString().split("/");
+      let ano = anoLongo.slice(-2);
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function armazenarValor() {
+      var valorGasolina = removerRS(document.getElementById("precoGasolina").value).replace(",", ".");
+      var valorAlcool   = removerRS(document.getElementById("precoAlcool").value).replace(",", ".");
+
+      var precoGasolina = parseFloat(valorGasolina);
+      var precoAlcool   = parseFloat(valorAlcool);
+
+      // Histório exige apenas os preços de combustível
+      if (isNaN(precoGasolina) || isNaN(precoAlcool)) {
+        showCustomAlert("Atenção", "Para gravar no histórico, Gasolina e Álcool devem ser preenchidos.");
+        return;
+      }
+
+      var listaValores  = document.getElementById("listaValores");
+      var dataAtualObj  = new Date();
+      var dataStr       = formatarDataCurta(dataAtualObj);
+
+      // Exemplo do registro: "07/01/25 Gasolina R$ 5.69 / Álcool R$ 3.89"
+      var novoRegistro  = dataStr + " Gasolina R$ " + precoGasolina.toFixed(2) +
+                          " / Álcool R$ " + precoAlcool.toFixed(2);
+
+      // Verifica duplicidade com o último registro
+      if (listaValores.children.length > 0) {
+        var ultimoRegistro      = listaValores.firstChild.textContent;
+        var ultimoRegistroTexto = ultimoRegistro.replace(" ❌", "");
+        if (novoRegistro === ultimoRegistroTexto) {
+          return;
+        }
+      }
+
+      // Cria novo <li>
+      var li = document.createElement("li");
+      li.innerHTML = novoRegistro + ' <span class="delete-icon" onclick="removerItem(this)">X</span>';
+      listaValores.insertBefore(li, listaValores.firstChild);
+
+      // Limita a 10 registros
+      if (listaValores.children.length > 10) {
+        listaValores.removeChild(listaValores.lastChild);
+      }
+
+      localStorage.setItem("valores", listaValores.innerHTML);
+    }
+
+    function removerItem(iconElement) {
+      showCustomConfirm(
+        "Apagar Registro",
+        "Deseja apagar este registro?",
+        function() {
+          var li = iconElement.parentNode;
+          li.parentNode.removeChild(li);
+          localStorage.setItem("valores", document.getElementById("listaValores").innerHTML);
+        },
+        function() {
+          // Não faz nada
+        }
+      );
+    }
+
+    function carregarValores() {
+      var listaValores = document.getElementById("listaValores");
+      listaValores.innerHTML = localStorage.getItem("valores") || "";
+    }
+
+    function apagarHistorico() {
+      showCustomConfirm(
+        "Apagar Histórico",
+        "Deseja apagar o histórico?",
+        function() {
+          var listaValores = document.getElementById("listaValores");
+          listaValores.innerHTML = "";
+          localStorage.setItem("valores", "");
+        },
+        function() {
+          // Não faz nada
+        }
+      );
+    }
+  </script>
+</body>
+</html>
