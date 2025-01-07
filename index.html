@@ -69,6 +69,13 @@
       cursor: pointer;
     }
 
+    /* Remove as bolinhas do histórico */
+    #listaValores {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
     li {
       font-size: 14px;
       background-color: rgba(0, 0, 0, 0.5);
@@ -88,24 +95,31 @@
       font-weight: bold;
     }
 
-    /* POPUP GENÉRICO (alert/confirm customizado) */
+    /* ===============================
+       POPUP GENÉRICO (alert/confirm)
+       Cor de fundo #020288 c/ transparência 0.95
+       Texto em branco
+       =============================== */
     .popup {
       display: none;
       position: fixed;
       left: 50%;
       top: 40%;
       transform: translate(-50%, -50%);
-      background: #006400;
+      background: rgba(2, 2, 136, 0.95); /* #020288 com transparência */
       border: 2px solid black;
       padding: 20px;
       width: 350px;
-      z-index: 9999;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
       border-radius: 0.5rem;
-      color: white;
+      color: white; /* textos em branco */
+      z-index: 9999; /* para garantir que fique acima de outros elementos */
     }
 
-    #closeButton, #closeButtonGeneral {
+    /* Botões de fechar (X) */
+    #closeButton,
+    #closeButtonGeneral,
+    #closeButtonPosto {
       position: absolute;
       top: 10px;
       right: 10px;
@@ -116,26 +130,66 @@
       color: white;
     }
 
+    /* Botões internos do pop-up */
     .popup button {
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    /* Centraliza e separa botões */
+    #generalPopupButtons,
+    #postoPopupButtons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem; /* espaçamento entre os botões */
       margin-top: 1rem;
     }
 
-    /* Popup EXCLUSIVO do Premium */
-    #popup {
-      background: green;
-    }
-
-    /* Popup GENÉRICO */
-    #generalPopup {
-      background: rgba(0, 0.5, 0.5, 0.95);
-    }
-
-    /* Ícone de remover item no histórico (X) */
+    /* Ícone de remover item no histórico (❌) */
     .delete-icon {
       color: red;
       margin-left: 10px;
       cursor: pointer;
       font-weight: bold;
+    }
+
+    /* Popup ESPECÍFICO para editar/visualizar posto */
+    #postoPopup {
+      z-index: 9998; /* Fica abaixo do popup genérico de confirm */
+    }
+
+    .campo-post {
+      margin-bottom: 1rem;
+    }
+
+    .enderecoContainer {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Botões no mesmo estilo (cor, formato) */
+    .inline-button {
+      font-size: 0.8rem;
+      cursor: pointer;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 0.3rem;
+      padding: 0.3rem 0.5rem;
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+
+    /* Textarea para endereço: 3 linhas, mais largo */
+    textarea {
+      width: 100%;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      resize: vertical; /* permite redimensionar verticalmente */
+      padding: 0.5rem;
     }
   </style>
 </head>
@@ -154,24 +208,51 @@
     <div>
       <form>
         <label for="precoGasolina">⛽ Preço da Gasolina:</label>
-        <input type="tel" id="precoGasolina" name="precoGasolina" 
-               placeholder="Digite somente números"
-               onfocus="this.select()" oninput="adicionarVirgula(this)" onblur="formatarCampo(this)">
+        <input 
+          type="tel" 
+          id="precoGasolina" 
+          name="precoGasolina" 
+          placeholder="Digite somente números"
+          onfocus="this.select()" 
+          oninput="adicionarVirgula(this)" 
+          onblur="formatarCampo(this)"
+        >
 
         <label for="precoAlcool">🍺 Preço do Álcool (Etanol):</label>
-        <input type="tel" id="precoAlcool" name="precoAlcool" 
-               placeholder="Digite somente números"
-               onfocus="this.select()" oninput="adicionarVirgula(this)" onblur="formatarCampo(this)">
+        <input 
+          type="tel" 
+          id="precoAlcool" 
+          name="precoAlcool"
+          placeholder="Digite somente números"
+          onfocus="this.select()" 
+          oninput="adicionarVirgula(this)" 
+          onblur="formatarCampo(this)"
+        >
 
         <label for="kmLitro">🚙 KM/L do Automóvel (opcional):</label>
-        <input type="number" step="0.01" id="kmLitro" name="kmLitro" 
-               placeholder="Digite somente números" onfocus="this.select()">
+        <input 
+          type="number" 
+          step="0.01" 
+          id="kmLitro" 
+          name="kmLitro" 
+          placeholder="Digite somente números" 
+          onfocus="this.select()"
+        >
 
         <label for="distancia">🗺️ Distância a percorrer (KM) (opcional):</label>
-        <input type="number" id="distancia" name="distancia" 
-               placeholder="Digite somente números" onfocus="this.select()">
+        <input 
+          type="number" 
+          id="distancia" 
+          name="distancia" 
+          placeholder="Digite somente números" 
+          onfocus="this.select()"
+        >
 
-        <button type="button" class="calcular" onclick="calcularLitros(); armazenarValor()">
+        <button 
+          type="button" 
+          class="calcular" 
+          onclick="calcularLitros(); armazenarValor()"
+        >
           Calcular
         </button>
       </form>
@@ -219,14 +300,76 @@
     <div id="generalPopupButtons"></div>
   </div>
 
+  <!-- POPUP ESPECÍFICO PARA EDITAR/VER POSTO (Nome/Endereço) -->
+  <div class="popup" id="postoPopup" style="display: none;">
+    <button id="closeButtonPosto" onclick="fecharPostoPopup()">X</button>
+
+    <!-- "Detalhes do Posto" + Botão "Preencher com dados anteriores" -->
+    <h3 style="margin-bottom: 0;">Detalhes do Posto</h3>
+    <!-- margin-bottom adicionado para pular uma linha após o botão -->
+    <button 
+      type="button" 
+      class="inline-button" 
+      onclick="preencherDadosAnteriores()" 
+      style="margin-top: 0.3rem; margin-bottom: 1rem;"
+    >
+      Preencher com dados anteriores
+    </button>
+
+    <div class="campo-post">
+      <label for="nomePosto">Nome do posto:</label>
+      <input type="text" id="nomePosto" placeholder="Ex: Posto XYZ">
+    </div>
+
+    <div class="campo-post">
+      <div class="enderecoContainer">
+        <label for="enderecoPosto" style="margin-bottom: 0;">Endereço do posto:</label>
+        <button 
+          type="button" 
+          class="inline-button"
+          onclick="usarLocalizacao()"
+        >
+          Minhas coordenadas
+        </button>
+      </div>
+
+      <!-- Textarea com 3 linhas por padrão -->
+      <textarea 
+        id="enderecoPosto" 
+        rows="3" 
+        placeholder="Ex: Av. Principal, 123. 
+Pode incluir detalhes do ponto de referência."
+      ></textarea>
+    </div>
+
+    <div id="postoPopupButtons">
+      <button id="btnApagarConteudo" onclick="apagarConteudoPosto()">Apagar conteúdo</button>
+      <button id="btnSalvarPosto" onclick="salvarPosto()">Salvar</button>
+    </div>
+  </div>
+
   <script>
+    /*
+      Cada item do histórico:
+      {
+        date: "07/01/25",
+        gasPrice: number,
+        alcPrice: number,
+        stationName: string,
+        stationAddress: string
+      }
+    */
+    let indexEmEdicao = null;
+    let valorInicialNome = "";
+    let valorInicialEndereco = "";
+
     /* =======================
        FUNÇÕES DO PREMIUM
        ======================= */
     function abrirPremium() {
       atualizarBotaoLuz();
       if (localStorage.getItem("acessoPremium")) {
-        showCustomAlert("Acesso Premium", "Você já tem acesso premium e pode acender ou apagar a luz!");
+        showCustomAlert("Acesso Premium", "Você já tem acesso premium!");
       } else {
         exibirPopup();
       }
@@ -270,12 +413,11 @@
     const generalPopupMessage = document.getElementById("generalPopupMessage");
     const generalPopupButtons = document.getElementById("generalPopupButtons");
 
-    // ALERTA simples (só botão Ok)
     function showCustomAlert(title, message) {
       generalPopupTitle.innerText   = title;
       generalPopupMessage.innerText = message;
-      // Cria botão OK
-      generalPopupButtons.innerHTML = "";
+      generalPopupButtons.innerHTML = ""; // limpa botões
+
       const okButton = document.createElement("button");
       okButton.innerText = "OK";
       okButton.onclick = function() {
@@ -286,14 +428,11 @@
       generalPopup.style.display = "block";
     }
 
-    // CONFIRM (botão "Sim" e "Não")
     function showCustomConfirm(title, message, yesCallback, noCallback) {
       generalPopupTitle.innerText   = title;
       generalPopupMessage.innerText = message;
-      // Limpa botões
-      generalPopupButtons.innerHTML = "";
+      generalPopupButtons.innerHTML = ""; // limpa botões
 
-      // Botão SIM
       const yesBtn = document.createElement("button");
       yesBtn.innerText = "Sim";
       yesBtn.onclick = function() {
@@ -301,7 +440,6 @@
         if (yesCallback) yesCallback();
       };
 
-      // Botão NÃO
       const noBtn = document.createElement("button");
       noBtn.innerText = "Não";
       noBtn.onclick = function() {
@@ -317,6 +455,140 @@
 
     function fecharGeneralPopup() {
       generalPopup.style.display = "none";
+    }
+
+    /* =======================
+       POPUP POSTO (editar/ver)
+       ======================= */
+    function abrirEdicaoPosto(index) {
+      indexEmEdicao = index;
+      const historico = getHistorico();
+      const item = historico[index];
+
+      const nome = document.getElementById("nomePosto");
+      const end  = document.getElementById("enderecoPosto");
+
+      nome.value = item.stationName || "";
+      end.value  = item.stationAddress || "";
+
+      valorInicialNome     = nome.value;
+      valorInicialEndereco = end.value;
+
+      definirTextoBotaoSalvar();
+
+      document.getElementById("postoPopup").style.display = "block";
+
+      nome.oninput = definirTextoBotaoSalvar;
+      end.oninput  = definirTextoBotaoSalvar;
+    }
+
+    function fecharPostoPopup() {
+      document.getElementById("postoPopup").style.display = "none";
+      indexEmEdicao = null;
+    }
+
+    /* Apagar conteúdo (não apaga o registro) */
+    function apagarConteudoPosto() {
+      showCustomConfirm(
+        "Apagar conteúdo",
+        "Deseja apagar o conteúdo preenchido?",
+        function() {
+          const historico = getHistorico();
+          if (indexEmEdicao != null) {
+            historico[indexEmEdicao].stationName = "";
+            historico[indexEmEdicao].stationAddress = "";
+            salvarHistorico(historico);
+            renderHistorico();
+
+            document.getElementById("nomePosto").value = "";
+            document.getElementById("enderecoPosto").value = "";
+            definirTextoBotaoSalvar();
+          }
+        },
+        function() {
+          // não faz nada
+        }
+      );
+    }
+
+    /* Botão "Salvar" ou "Salvar alterações" */
+    function salvarPosto() {
+      const nome = document.getElementById("nomePosto").value.trim();
+      const end  = document.getElementById("enderecoPosto").value.trim();
+
+      const historico = getHistorico();
+      if (indexEmEdicao != null) {
+        historico[indexEmEdicao].stationName = nome;
+        historico[indexEmEdicao].stationAddress = end;
+        salvarHistorico(historico);
+        renderHistorico();
+        showCustomAlert("Sucesso", "Conteúdo registrado com sucesso!");
+      }
+      fecharPostoPopup();
+    }
+
+    function definirTextoBotaoSalvar() {
+      const nome = document.getElementById("nomePosto").value;
+      const end  = document.getElementById("enderecoPosto").value;
+      const botao = document.getElementById("btnSalvarPosto");
+
+      if (nome !== valorInicialNome || end !== valorInicialEndereco) {
+        botao.innerText = "Salvar alterações";
+      } else {
+        botao.innerText = "Salvar";
+      }
+    }
+
+    /* Botão "Preencher com dados anteriores" */
+    function preencherDadosAnteriores() {
+      const historico = getHistorico();
+      if (historico.length === 0) {
+        showCustomAlert("Informação", "Não há dados registrados no histórico.");
+        return;
+      }
+
+      // Procura o primeiro item (do topo) com stationName ou stationAddress
+      let itemEncontrado = null;
+      for (let i = 0; i < historico.length; i++) {
+        const it = historico[i];
+        const temNome = it.stationName && it.stationName.trim() !== "";
+        const temEnd  = it.stationAddress && it.stationAddress.trim() !== "";
+        if (temNome || temEnd) {
+          itemEncontrado = it;
+          break;
+        }
+      }
+
+      if (!itemEncontrado) {
+        showCustomAlert("Informação", "Não há dados registrados no histórico.");
+        return;
+      }
+
+      document.getElementById("nomePosto").value = itemEncontrado.stationName || "";
+      document.getElementById("enderecoPosto").value = itemEncontrado.stationAddress || "";
+      definirTextoBotaoSalvar();
+    }
+
+    /* Botão "Minhas coordenadas" */
+    function usarLocalizacao() {
+      if (!navigator.geolocation) {
+        showCustomAlert("Erro", "Seu navegador não suporta Geolocalização.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          const endField = document.getElementById("enderecoPosto");
+          endField.value = `Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`;
+          definirTextoBotaoSalvar();
+        },
+        function(err) {
+          showCustomAlert("Erro", "Não foi possível obter sua localização.");
+        }
+      );
     }
 
     /* =======================
@@ -369,23 +641,20 @@
       var kmLitro       = parseFloat(document.getElementById("kmLitro").value);
       var distancia     = parseFloat(document.getElementById("distancia").value);
 
-      // Exige apenas preços preenchidos:
       if (isNaN(precoGasolina) || isNaN(precoAlcool)) {
         showCustomAlert("Atenção", "Preencha os valores de Gasolina e Álcool.");
         return;
       }
 
-      // Relação para decidir vantagem
-      var relacao          = precoAlcool / precoGasolina;
-      var vantajosoAteAlc  = precoGasolina * 0.7;
-      var vantajosoAteGas  = precoAlcool   / 0.7;
+      var relacao         = precoAlcool / precoGasolina;
+      var vantajosoAteAlc = precoGasolina * 0.7;
+      var vantajosoAteGas = precoAlcool   / 0.7;
 
       var resultadoElem = document.getElementById("resultado");
-      var litrosElem   = document.getElementById("litros");
+      var litrosElem    = document.getElementById("litros");
       resultadoElem.innerHTML = "";
       litrosElem.innerHTML    = "";
 
-      // Exibe mensagem de vantagem
       if (relacao > 0.7) {
         resultadoElem.innerHTML =
           "<span class='abasteca'>👉 ABASTEÇA COM GASOLINA</span><br><br>" +
@@ -398,25 +667,25 @@
           "), abastecer com álcool é vantajoso até R$ " + vantajosoAteAlc.toFixed(2) + ".";
       }
 
-      // Se kmLitro e distancia forem preenchidos e válidos, calcular custo total
       if (!isNaN(kmLitro) && kmLitro > 0 && !isNaN(distancia) && distancia > 0) {
         var litrosNecessarios = distancia / kmLitro;
         var precoNecessGas    = litrosNecessarios * precoGasolina;
         var precoNecessAlc    = litrosNecessarios * precoAlcool;
 
         if (relacao > 0.7) {
-          // Se gasolina for mais vantajosa
           litrosElem.innerHTML =
-            "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) +
-            " litros de gasolina, com um custo de R$ " + precoNecessGas.toFixed(2);
+            "🗺️ Para essa distância são necessários " + 
+            litrosNecessarios.toFixed(2) + 
+            " litros de gasolina, com um custo de R$ " + 
+            precoNecessGas.toFixed(2);
         } else {
-          // Se álcool for mais vantajoso
           litrosElem.innerHTML =
-            "🗺️ Para essa distância são necessários " + litrosNecessarios.toFixed(2) +
-            " litros de álcool, com um custo de R$ " + precoNecessAlc.toFixed(2);
+            "🗺️ Para essa distância são necessários " + 
+            litrosNecessarios.toFixed(2) + 
+            " litros de álcool, com um custo de R$ " + 
+            precoNecessAlc.toFixed(2);
         }
       } else {
-        // Se não preencheram kmLitro/distancia, apenas exibir "não informado" (ou nada)
         litrosElem.innerHTML =
           "<small>KM/L e Distância não informados, então não calculamos o custo total.</small>";
       }
@@ -432,56 +701,55 @@
     }
 
     function armazenarValor() {
-      var valorGasolina = removerRS(document.getElementById("precoGasolina").value).replace(",", ".");
-      var valorAlcool   = removerRS(document.getElementById("precoAlcool").value).replace(",", ".");
+      let precoGasolina = parseFloat(removerRS(document.getElementById("precoGasolina").value).replace(",", "."));
+      let precoAlcool   = parseFloat(removerRS(document.getElementById("precoAlcool").value).replace(",", "."));
 
-      var precoGasolina = parseFloat(valorGasolina);
-      var precoAlcool   = parseFloat(valorAlcool);
-
-      // Histório exige apenas os preços de combustível
       if (isNaN(precoGasolina) || isNaN(precoAlcool)) {
         showCustomAlert("Atenção", "Para gravar no histórico, Gasolina e Álcool devem ser preenchidos.");
         return;
       }
 
-      var listaValores  = document.getElementById("listaValores");
-      var dataAtualObj  = new Date();
-      var dataStr       = formatarDataCurta(dataAtualObj);
+      let historico = getHistorico();
+      let dataAtualObj = new Date();
+      let dataStr = formatarDataCurta(dataAtualObj);
 
-      // Exemplo do registro: "07/01/25 Gasolina R$ 5.69 / Álcool R$ 3.89"
-      var novoRegistro  = dataStr + " Gasolina R$ " + precoGasolina.toFixed(2) +
-                          " / Álcool R$ " + precoAlcool.toFixed(2);
-
-      // Verifica duplicidade com o último registro
-      if (listaValores.children.length > 0) {
-        var ultimoRegistro      = listaValores.firstChild.textContent;
-        var ultimoRegistroTexto = ultimoRegistro.replace(" ❌", "");
-        if (novoRegistro === ultimoRegistroTexto) {
+      if (historico.length > 0) {
+        let primeiro = historico[0];
+        if (
+          primeiro.date === dataStr &&
+          primeiro.gasPrice === precoGasolina &&
+          primeiro.alcPrice === precoAlcool
+        ) {
           return;
         }
       }
 
-      // Cria novo <li>
-      var li = document.createElement("li");
-      li.innerHTML = novoRegistro + ' <span class="delete-icon" onclick="removerItem(this)">X</span>';
-      listaValores.insertBefore(li, listaValores.firstChild);
+      let novoItem = {
+        date: dataStr,
+        gasPrice: precoGasolina,
+        alcPrice: precoAlcool,
+        stationName: "",
+        stationAddress: ""
+      };
 
-      // Limita a 10 registros
-      if (listaValores.children.length > 10) {
-        listaValores.removeChild(listaValores.lastChild);
+      historico.unshift(novoItem);
+      if (historico.length > 10) {
+        historico.pop();
       }
 
-      localStorage.setItem("valores", listaValores.innerHTML);
+      salvarHistorico(historico);
+      renderHistorico();
     }
 
-    function removerItem(iconElement) {
+    function removerItem(index) {
       showCustomConfirm(
         "Apagar Registro",
-        "Deseja apagar este registro?",
+        "Deseja apagar este registro do histórico?",
         function() {
-          var li = iconElement.parentNode;
-          li.parentNode.removeChild(li);
-          localStorage.setItem("valores", document.getElementById("listaValores").innerHTML);
+          let historico = getHistorico();
+          historico.splice(index, 1);
+          salvarHistorico(historico);
+          renderHistorico();
         },
         function() {
           // Não faz nada
@@ -490,23 +758,58 @@
     }
 
     function carregarValores() {
-      var listaValores = document.getElementById("listaValores");
-      listaValores.innerHTML = localStorage.getItem("valores") || "";
+      renderHistorico();
     }
 
     function apagarHistorico() {
       showCustomConfirm(
         "Apagar Histórico",
-        "Deseja apagar o histórico?",
+        "Deseja apagar todo o histórico?",
         function() {
-          var listaValores = document.getElementById("listaValores");
-          listaValores.innerHTML = "";
-          localStorage.setItem("valores", "");
+          salvarHistorico([]);
+          renderHistorico();
         },
         function() {
           // Não faz nada
         }
       );
+    }
+
+    /* =======================
+       FUNÇÕES DE HISTÓRICO
+       ======================= */
+    function getHistorico() {
+      let data = localStorage.getItem("historico");
+      if (data) {
+        return JSON.parse(data);
+      }
+      return [];
+    }
+
+    function salvarHistorico(arr) {
+      localStorage.setItem("historico", JSON.stringify(arr));
+    }
+
+    function renderHistorico() {
+      let listaValores = document.getElementById("listaValores");
+      listaValores.innerHTML = "";
+
+      let historico = getHistorico();
+      historico.forEach((item, index) => {
+        let hasData = (item.stationName && item.stationName.trim() !== "") ||
+                      (item.stationAddress && item.stationAddress.trim() !== "");
+        let emojiPosto = hasData ? "🏠" : "✏️";
+
+        let li = document.createElement("li");
+        li.innerHTML = `
+          <span style="cursor:pointer" onclick="abrirEdicaoPosto(${index})">
+            ${emojiPosto}
+          </span>
+          ${item.date} Gasolina R$ ${item.gasPrice.toFixed(2)} / Álcool R$ ${item.alcPrice.toFixed(2)}
+          <span class="delete-icon" onclick="removerItem(${index})">❌</span>
+        `;
+        listaValores.appendChild(li);
+      });
     }
   </script>
 </body>
